@@ -2,6 +2,13 @@
   "registry-mirrors": [
     {{MIRROR_URLS}}
   ],
+  "insecure-registries": [
+    "docker.xuanyuan.me"
+  ],
+  "dns": [
+    "119.29.29.29",
+    "114.114.114.114"
+  ],
   "max-concurrent-downloads": 10,
   "log-driver": "json-file",
   "log-level": "warn",

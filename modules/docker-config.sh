@@ -114,11 +114,18 @@ configure_docker_mirrors() {
     if [ -f "$template_file" ]; then
         sed "s|{{MIRROR_URLS}}|$mirror_urls|g" "$template_file" > "$daemon_json"
     else
-        # 如果模板不存在，直接生成
+        # 如果模板不存在，直接生成（参考轩辕镜像官方配置）
         cat > "$daemon_json" <<EOF
 {
   "registry-mirrors": [
 $(echo -e "$mirror_urls")
+  ],
+  "insecure-registries": [
+    "docker.xuanyuan.me"
+  ],
+  "dns": [
+    "119.29.29.29",
+    "114.114.114.114"
   ],
   "max-concurrent-downloads": 10,
   "log-driver": "json-file",
