@@ -318,26 +318,39 @@ test_network() {
     echo -e "${GREEN}测试网络连接...${NC}"
     separator
     
+    # 确保有 curl 或 wget
+    if ! command_exists curl && ! command_exists wget; then
+        warn "未检测到 curl 或 wget，正在安装 curl..."
+        apt-get update -qq
+        apt-get install -y curl >/dev/null 2>&1
+    fi
+    
     local test_urls=(
-        "baidu.com|百度"
+        "www.baidu.com|百度"
         "github.com|GitHub"
         "registry.npmjs.org|NPM Registry"
         "pypi.org|Python PyPI"
         "hub.docker.com|Docker Hub"
     )
     
+    local success_count=0
+    local total_count=${#test_urls[@]}
+    
     for url_info in "${test_urls[@]}"; do
         IFS='|' read -r url name <<< "$url_info"
         
         step "测试 $name ($url)..."
         
-        if test_connection "$url" 3; then
+        if test_connection_smart "$url" 5; then
             success "$name 连接正常"
+            ((success_count++))
         else
             error "$name 连接失败"
         fi
     done
     
+    separator
+    echo -e "${GREEN}测试结果: $success_count/$total_count 成功${NC}"
     separator
     
     # DNS 解析测试

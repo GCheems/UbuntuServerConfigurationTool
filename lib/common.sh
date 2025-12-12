@@ -126,6 +126,59 @@ test_http() {
     fi
 }
 
+# 测试 HTTPS 连接（更可靠的网络测试）
+test_https_connection() {
+    local host="$1"
+    local timeout="${2:-10}"
+    local url="https://${host}"
+    
+    # 优先使用 curl
+    if command_exists curl; then
+        # 使用 --connect-timeout 和 -m 限制总时间
+        # -I 只获取 header，-L 跟随重定向，-s 静默模式
+        if curl -I -L -s --connect-timeout "$timeout" -m "$timeout" "$url" >/dev/null 2>&1; then
+            return 0
+        fi
+    elif command_exists wget; then
+        # wget 的 spider 模式只检查资源是否存在
+        if wget --spider --timeout="$timeout" -q "$url" 2>&1; then
+            return 0
+        fi
+    fi
+    
+    # 如果 HTTPS 失败，尝试 HTTP
+    url="http://${host}"
+    if command_exists curl; then
+        if curl -I -L -s --connect-timeout "$timeout" -m "$timeout" "$url" >/dev/null 2>&1; then
+            return 0
+        fi
+    elif command_exists wget; then
+        if wget --spider --timeout="$timeout" -q "$url" 2>&1; then
+            return 0
+        fi
+    fi
+    
+    return 1
+}
+
+# 综合连接测试（先尝试 HTTPS，再尝试 ping）
+test_connection_smart() {
+    local host="$1"
+    local timeout="${2:-5}"
+    
+    # 首先尝试 HTTPS 连接（更可靠）
+    if test_https_connection "$host" "$timeout"; then
+        return 0
+    fi
+    
+    # 如果 HTTPS 失败，尝试 ping
+    if ping -c 1 -W "$timeout" "$host" >/dev/null 2>&1; then
+        return 0
+    fi
+    
+    return 1
+}
+
 # 询问用户确认
 confirm() {
     local message="$1"
