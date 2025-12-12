@@ -343,7 +343,7 @@ test_network() {
         
         if test_connection_smart "$url" 5; then
             success "$name 连接正常"
-            ((success_count++))
+            success_count=$((success_count + 1))
         else
             error "$name 连接失败"
         fi
