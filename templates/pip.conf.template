@@ -1,0 +1,6 @@
+[global]
+index-url = {{MIRROR_URL}}
+trusted-host = {{MIRROR_HOST}}
+
+[install]
+trusted-host = {{MIRROR_HOST}}

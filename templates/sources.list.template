@@ -1,0 +1,19 @@
+# Ubuntu {{VERSION}} ({{CODENAME}}) 官方源 - 由阿里云镜像替代
+
+# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
+deb {{MIRROR_URL}} {{CODENAME}} main restricted universe multiverse
+# deb-src {{MIRROR_URL}} {{CODENAME}} main restricted universe multiverse
+
+deb {{MIRROR_URL}} {{CODENAME}}-updates main restricted universe multiverse
+# deb-src {{MIRROR_URL}} {{CODENAME}}-updates main restricted universe multiverse
+
+deb {{MIRROR_URL}} {{CODENAME}}-backports main restricted universe multiverse
+# deb-src {{MIRROR_URL}} {{CODENAME}}-backports main restricted universe multiverse
+
+# 安全更新
+deb {{MIRROR_URL}} {{CODENAME}}-security main restricted universe multiverse
+# deb-src {{MIRROR_URL}} {{CODENAME}}-security main restricted universe multiverse
+
+# 预发布软件源，不建议启用
+# deb {{MIRROR_URL}} {{CODENAME}}-proposed main restricted universe multiverse
+# deb-src {{MIRROR_URL}} {{CODENAME}}-proposed main restricted universe multiverse

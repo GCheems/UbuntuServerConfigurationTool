@@ -1,0 +1,13 @@
+{
+  "registry-mirrors": [
+    {{MIRROR_URLS}}
+  ],
+  "max-concurrent-downloads": 10,
+  "log-driver": "json-file",
+  "log-level": "warn",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  },
+  "storage-driver": "overlay2"
+}
