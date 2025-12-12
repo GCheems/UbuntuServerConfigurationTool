@@ -335,6 +335,7 @@ test_network() {
     
     local success_count=0
     local total_count=${#test_urls[@]}
+    local docker_failed=false
     
     for url_info in "${test_urls[@]}"; do
         IFS='|' read -r url name <<< "$url_info"
@@ -346,12 +347,28 @@ test_network() {
             success_count=$((success_count + 1))
         else
             error "$name 连接失败"
+            
+            # 特别标记 Docker Registry 失败
+            if [[ "$url" == "registry-1.docker.io" ]]; then
+                docker_failed=true
+            fi
         fi
     done
     
     separator
     echo -e "${GREEN}测试结果: $success_count/$total_count 成功${NC}"
     separator
+    
+    # Docker Registry 失败的特殊提示
+    if [ "$docker_failed" = true ]; then
+        echo ""
+        warn "Docker Hub 官方地址在中国大陆被封锁，这是正常现象！"
+        info "解决方案："
+        echo "  1. 配置 Docker 镜像加速（主菜单选项 3）"
+        echo "  2. 配置后 Docker 会自动使用国内镜像源"
+        echo "  3. 即使此测试失败，配置镜像后仍可正常拉取镜像"
+        separator
+    fi
     
     # DNS 解析测试
     if command_exists nslookup; then
