@@ -77,8 +77,14 @@ configure_docker_mirrors() {
         backup_config "$daemon_json" "$MODULE_NAME"
     fi
     
+    separator
+    info "可用的 Docker 镜像加速器:"
+    separator
+    
     # 构建镜像 URL 列表
     local mirror_urls=""
+    local has_aliyun=false
+    
     for mirror in "${DOCKER_MIRRORS[@]}"; do
         IFS='|' read -r name url desc <<< "$mirror"
         if [ -z "$mirror_urls" ]; then
@@ -86,15 +92,30 @@ configure_docker_mirrors() {
         else
             mirror_urls="$mirror_urls,\n    \"$url\""
         fi
-        info "添加镜像: $desc - $url"
+        info "  • $desc"
+        echo "    $url"
+        
+        # 检查是否包含阿里云
+        if [[ "$name" == "aliyun" ]]; then
+            has_aliyun=true
+        fi
     done
+    
+    separator
+    
+    # 阿里云镜像特殊提示
+    if [ "$has_aliyun" = true ]; then
+        warn "注意: 阿里云镜像加速器需要注册账号后获取专属地址"
+        info "获取地址: https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors"
+        echo ""
+    fi
     
     # 生成配置文件
     if [ -f "$template_file" ]; then
         sed "s|{{MIRROR_URLS}}|$mirror_urls|g" "$template_file" > "$daemon_json"
     else
         # 如果模板不存在，直接生成
-        cat > "$daemon_json" << EOF
+        cat > "$daemon_json" <<EOF
 {
   "registry-mirrors": [
 $(echo -e "$mirror_urls")

@@ -195,16 +195,26 @@ sudo apt update
 ### Docker 镜像加速
 
 **配置的镜像:**
-- 阿里云 Docker 镜像
-- 网易云 Docker 镜像
-- 中科大 Docker 镜像
-- 腾讯云 Docker 镜像
+- DockerProxy (dockerproxy.com) - 推荐
+- 南京大学 Docker 镜像
+- 上海交大 Docker 镜像
+- 阿里云 Docker 镜像（需注册账号获取专属地址）
+
+> **⚠️ 重要提示:** 
+> - Docker Hub 在中国大陆访问受限，镜像源可能随时失效
+> - 建议配置多个镜像源作为备用
+> - 阿里云镜像需要注册账号后获取专属加速地址
+> - 获取地址: https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors
 
 **配置文件:** `/etc/docker/daemon.json`
 
 **验证:**
 ```bash
+# 测试拉取镜像
 docker pull hello-world
+
+# 查看配置的镜像源
+docker info | grep "Registry Mirrors" -A 5
 ```
 
 ### Git/GitHub 加速
