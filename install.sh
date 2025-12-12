@@ -330,12 +330,13 @@ test_network() {
         "github.com|GitHub"
         "registry.npmjs.org|NPM Registry"
         "pypi.org|Python PyPI"
-        "registry-1.docker.io|Docker Registry"
     )
+    
+    echo -e "${BLUE}基础网络测试:${NC}"
+    echo ""
     
     local success_count=0
     local total_count=${#test_urls[@]}
-    local docker_failed=false
     
     for url_info in "${test_urls[@]}"; do
         IFS='|' read -r url name <<< "$url_info"
@@ -347,28 +348,63 @@ test_network() {
             success_count=$((success_count + 1))
         else
             error "$name 连接失败"
-            
-            # 特别标记 Docker Registry 失败
-            if [[ "$url" == "registry-1.docker.io" ]]; then
-                docker_failed=true
-            fi
         fi
     done
     
     separator
-    echo -e "${GREEN}测试结果: $success_count/$total_count 成功${NC}"
+    echo -e "${GREEN}基础网络测试结果: $success_count/$total_count 成功${NC}"
     separator
     
-    # Docker Registry 失败的特殊提示
-    if [ "$docker_failed" = true ]; then
-        echo ""
-        warn "Docker Hub 官方地址在中国大陆被封锁，这是正常现象！"
-        info "解决方案："
-        echo "  1. 配置 Docker 镜像加速（主菜单选项 3）"
-        echo "  2. 配置后 Docker 会自动使用国内镜像源"
-        echo "  3. 即使此测试失败，配置镜像后仍可正常拉取镜像"
-        separator
+    # Docker 镜像源测试
+    echo ""
+    echo -e "${BLUE}Docker 镜像源测试:${NC}"
+    echo ""
+    
+    # 测试配置的镜像源
+    local docker_mirrors=(
+        "docker.1ms.run|毫秒镜像"
+        "docker.xuanyuan.me|轩辕镜像"
+        "dockerproxy.com|DockerProxy"
+    )
+    
+    local docker_success=0
+    local docker_total=${#docker_mirrors[@]}
+    
+    for mirror_info in "${docker_mirrors[@]}"; do
+        IFS='|' read -r mirror_url mirror_name <<< "$mirror_info"
+        
+        step "测试 $mirror_name ($mirror_url)..."
+        
+        if test_https_connection "$mirror_url" 5; then
+            success "$mirror_name 可用"
+            docker_success=$((docker_success + 1))
+        else
+            warn "$mirror_name 当前不可用"
+        fi
+    done
+    
+    separator
+    
+    if [ $docker_success -gt 0 ]; then
+        echo -e "${GREEN}Docker 镜像源: $docker_success/$docker_total 可用${NC}"
+        success "Docker 镜像拉取应该正常"
+    else
+        echo -e "${RED}Docker 镜像源: 0/$docker_total 可用${NC}"
+        warn "所有镜像源都不可用，Docker 拉取可能失败"
+        info "建议："
+        echo "  1. 检查网络连接"
+        echo "  2. 尝试配置其他镜像源"
     fi
+    
+    separator
+    
+    # Docker 官方地址说明
+    echo ""
+    info "关于 Docker Hub 官方地址 (registry-1.docker.io):"
+    echo "  • 在中国大陆被 GFW 封锁，无法直接访问"
+    echo "  • 配置镜像加速后，Docker 会使用国内镜像源"
+    echo "  • 即使官方地址不可达，仍可正常拉取镜像"
+    separator
     
     # DNS 解析测试
     if command_exists nslookup; then
