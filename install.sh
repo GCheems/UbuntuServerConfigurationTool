@@ -330,7 +330,7 @@ test_network() {
         "github.com|GitHub"
         "registry.npmjs.org|NPM Registry"
         "pypi.org|Python PyPI"
-        "hub.docker.com|Docker Hub"
+        "registry-1.docker.io|Docker Registry"
     )
     
     local success_count=0
@@ -355,7 +355,6 @@ test_network() {
     
     # DNS 解析测试
     if command_exists nslookup; then
-        step "测试 DNS 解析..."
         test_dns
     fi
 }
