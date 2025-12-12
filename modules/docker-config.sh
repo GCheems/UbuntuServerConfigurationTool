@@ -121,7 +121,8 @@ configure_docker_mirrors() {
 $(echo -e "$mirror_urls")
   ],
   "insecure-registries": [
-    "docker.xuanyuan.me"
+    "docker.xuanyuan.me",
+    "docker.1ms.run"
   ],
   "dns": [
     "119.29.29.29",
