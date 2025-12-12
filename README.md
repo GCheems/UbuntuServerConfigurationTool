@@ -195,7 +195,8 @@ sudo apt update
 ### Docker 镜像加速
 
 **配置的镜像:**
-- DockerProxy (dockerproxy.com) - 推荐
+- 轩辕镜像 (docker.xuanyuan.me) - 推荐，稳定快速
+- DockerProxy (dockerproxy.com)
 - 南京大学 Docker 镜像
 - 上海交大 Docker 镜像
 - 阿里云 Docker 镜像（需注册账号获取专属地址）
@@ -203,6 +204,7 @@ sudo apt update
 > **⚠️ 重要提示:** 
 > - Docker Hub 在中国大陆访问受限，镜像源可能随时失效
 > - 建议配置多个镜像源作为备用
+> - 轩辕镜像使用Cloudflare+国内CDN加速，效果显著
 > - 阿里云镜像需要注册账号后获取专属加速地址
 > - 获取地址: https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors
 
